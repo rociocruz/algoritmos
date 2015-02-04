@@ -1,0 +1,131 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include "stdio.h"
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+struct t_usuario{
+	int id;
+	string contrasena;
+	string cuenta;
+	string garantia;
+};
+
+struct t_persona{
+	int id;
+	string ci;
+	string fn;
+	string nombre;
+	string apellido;
+	string garantia;
+};
+void altasUsuario();
+void altasPersona();
+
+void main(){
+	int opc;
+	do{
+		
+		cout<<endl<<"MENU "<<endl;
+		cout<<"1.altasusuario";
+		cout<<endl;
+        cout<<"2.altaspersona";
+		cout<<endl;
+		cout<<"0.salir";
+		cout<<endl;
+		cout<<"ingrese la opcion";
+		cout<<endl;
+		cin>>opc;
+		switch(opc)
+		{
+		case 1:	altasUsuario();
+					break;
+		case 2: altasPersona();
+					break;
+			case 0: 
+					cout<<"salir";
+					break;
+			default:
+				cout<<"error";
+				break;
+		}
+		cout<<"\n\n\n";
+	}while(opc!=0);
+}
+
+
+
+
+
+void altasUsuario()
+{
+	FILE *ptr;
+	int nroId;
+	t_usuario usuario;
+	ptr = fopen("Usuarios.dat","w+b");
+	if(ptr==NULL)
+		ptr = fopen("Usuarios.dat","wb"); 
+
+	cout<<"Ingrese el id:";
+	cin>>nroId;
+	fread(&usuario,sizeof(usuario),1,ptr);
+	while(!feof(ptr)){
+		if(usuario.id=nroId){
+		cout<<"el usuario esta duplicado";
+		fclose(ptr);
+		getch();
+		return;
+		}
+		fread(&usuario,sizeof(usuario),1,ptr);
+	}
+
+	cout << "\nNombre de usuario "; 
+	getline(cin,usuario.cuenta);
+	getline(cin,usuario.cuenta);
+	cout << "\nContrasenha : "; 
+	getline(cin,usuario.contrasena);
+	fwrite (&usuario,sizeof(usuario),1,ptr);
+	cout << "\n\n\n\usuario registrado !!!";
+	fclose(ptr);
+	
+}
+
+void altasPersona()
+{
+	FILE *ptr;
+	int nroId;
+	t_persona persona;
+	ptr = fopen("Personas.dat","w+b");
+	if(ptr==NULL)
+		ptr = fopen("Personas.dat","wb"); 
+
+	cout<<"Ingrese el id:";
+	cin>>nroId;
+	fread(&persona,sizeof(persona),1,ptr);
+	while(!feof(ptr)){
+		if(persona.id=nroId){
+		cout<<"el id de la persona esta duplicado";
+		fclose(ptr);
+		getch();
+		return;
+		}
+		fread(&persona,sizeof(persona),1,ptr);
+	}
+
+	cout << "\ningrese ci "; 
+	getline(cin,persona.ci);
+	cout << "\nintroducir fechanacimiento : "; 
+	getline(cin,persona.fn);
+    cout << "\nintroducir nombre : ";
+    getline(cin,persona.nombre);
+	cout << "\nintroducir apellido : ";
+    getline(cin,persona.apellido);
+	fwrite (&persona,sizeof(persona),1,ptr);
+	
+	cout << "\nPersona Resgistrada";
+	fclose(ptr);
+	
+}
