@@ -1,0 +1,70 @@
+Programa Impuestos AFP Vectores
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#define MAX 100
+ 
+using namespace std;
+ 
+float impuesto (float sb);
+float AFP (float sb);
+ 
+int main ()
+{  int cod[MAX],i=0,num;
+   float sb[MAX],imp[MAX],afp[MAX],sn[MAX],a[MAX];
+// Pide numero de empleados
+   do {
+         cout<< "Ingrese numero de empleados:";
+         cin>>num;
+   } while ((num>MAX)||(num<=0));
+  
+//ciclo repetitivo
+   for (int i=0;i<num;i++)
+   {do {
+      cout<<"Ingrese el codigo del empleado: \n";
+        cin>>cod[i];
+   }while(((cod[i]<=0)||(cod[i]>=200))&&(cod[i]!=-999));
+   do
+     {
+       cout <<"Ingrese el salario bruto: \n";
+     cin>>sb[i];
+   }while ((sb[i]<=0)||(sb[i]>=16000));
+   if(sb[i]>2800)
+   {
+     imp[i]=impuesto (sb[i]);
+       afp[i]=AFP(sb[i]);
+       sn[i]=sb[i]-imp[i]-afp[i];
+       if(sb[i]>10000)
+            {a[i]=0.01*sb[i];
+           sn[i]=sn[i]-a[i];
+            }
+      else
+            {a[i]=0;
+            }
+   }
+   else
+   {
+      imp[i]=0;
+    afp[i]=0;
+    a[i]=0;
+    sn[i]=sb[i];
+   }
+  }
+  cout<<"------Planilla de sueldos-----"<<"\n";
+  cout<<"Codigo"<<"\      \t"<<"Sal.Bruto"<<"\t"<<"Impuestos"<<"\t"<<"Afp"<<"\t"<<"Otro"<<"\t"<<"Sal.Neto"<<"\n";
+  for(int c=0;c<num;c++)
+  {cout<<cod[c]<<"\t"<<sb[c]<<"\t"<<imp[c]<<"\t"<<afp[c]<<"\t"<<a[c]<<"\t"<<sn[c]<<"\n";
+  }
+  cout<<"Gracias \n";
+  getch();
+  return 0;
+}
+ 
+ 
+ 
+float impuesto (float sb)
+{return sb*0.13;
+}
+float AFP (float sb)
+{return sb*0.121;
+}
