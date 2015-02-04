@@ -1,0 +1,270 @@
+PRACTICO #3 ALGORITMOS
+1.- //1. Implemente una función que invierta una cadena
+# include <iostream>
+# include <conio.h>
+# include <string.h>
+using namespace std;
+
+void invertir(char cad[])
+{
+	int i, n=strlen(cad);
+	char aux;
+	for(i=0;i<n/2;i++)
+	{
+		aux=cad[i];
+		cad[i]=cad[n-1-i];
+		cad[n-1-i]=aux;
+	}
+	for(i=0;i<n;i++)
+	{
+		cout<<cad[i];
+	}
+}
+void main()
+{
+	char cad[30];
+	cout<<"Introdcir palabra: ";
+	gets(cad);
+	invertir(cad);
+	getch();
+}
+
+2.- //2. Un palíndromo es una palabra que se lee igual hacia adelante que hacia atras.
+//Desarrolle una función que determine si una palabra es palíndrome o no.
+# include <iostream>
+# include <conio.h>
+# include <string.h>
+using namespace std;
+
+void palindromo(char cad[], char cad2[])
+{
+	int i, n=strlen(cad), c=0;
+	for(i=0;i<n;i++)
+	{
+		cad2[i]=cad[n-1-i];
+	}
+	if(strcmp(cad2,cad)==0)
+	{
+		cout<<"Es palindromo.";
+	}
+	else
+	{
+		cout<<"No es palindromo.";
+	}
+}
+void main()
+{
+	char cad[30], cad2[30];
+	cout<<"Introdcir palabra: ";
+	gets(cad);
+	palindromo(cad, cad2);
+	getch();
+}
+
+3.- //3. Escriba una función que determine la cantidad de minusculas en una cadena.
+# include <iostream>
+# include <conio.h>
+# include <string.h>
+using namespace std;
+void contarminusculas(char cad[])
+{
+	int i, c=0, n=strlen(cad);
+	for(i=0;i<n;i++)
+	{
+		if(cad[i]=='a'||cad[i]=='b'||cad[i]=='c'||cad[i]=='d'||cad[i]=='e'||cad[i]=='f'||cad[i]=='g'||cad[i]=='h'||cad[i]=='i'||cad[i]=='j'||cad[i]=='k'||cad[i]=='l'||cad[i]=='m'||cad[i]=='n'||cad[i]=='o'||cad[i]=='p'||cad[i]=='q'||cad[i]=='r'||cad[i]=='s'||cad[i]=='t'||cad[i]=='u'||cad[i]=='v'||cad[i]=='w'||cad[i]=='x'||cad[i]=='y'||cad[i]=='z'||cad[i]=='ñ')
+		{
+			c++;
+		}
+	}
+	cout<<c;
+}
+void main()
+{
+	char cad[50];
+	cout<<"introducir palabra: ";
+	gets(cad);
+	contarminusculas(cad);
+	getch();
+}
+
+
+4.- //4. Escriba una función que determine la cantidad de mayusculas en una cadena.
+# include <iostream>
+# include <conio.h>
+# include <string.h>
+using namespace std;
+void contarmayusculas(char cad[])
+{
+	int i, c=0, n=strlen(cad);
+	for(i=0;i<n;i++)
+	{
+		if(cad[i]=='A'||cad[i]=='B'||cad[i]=='C'||cad[i]=='D'||cad[i]=='E'||cad[i]=='F'||cad[i]=='G'||cad[i]=='H'||cad[i]=='I'||cad[i]=='J'||cad[i]=='K'||cad[i]=='L'||cad[i]=='M'||cad[i]=='N'||cad[i]=='O'||cad[i]=='P'||cad[i]=='Q'||cad[i]=='R'||cad[i]=='S'||cad[i]=='T'||cad[i]=='U'||cad[i]=='V'||cad[i]=='W'||cad[i]=='X'||cad[i]=='Y'||cad[i]=='Z'||cad[i]=='Ñ')
+		{
+			c++;
+		}
+	}
+	cout<<c;
+}
+void main()
+{
+	char cad[50];
+	cout<<"introducir palabra: ";
+	gets(cad);
+	contarmayusculas(cad);
+	getch();
+}
+
+5.- //5. Desarrolle una función que calcule la cantidad de veces que se repite un caracter dado en una cadena.
+# include <iostream>
+# include <conio.h>
+# include <string.h>
+using namespace std;
+void contarcaracter(char cad[], char car[])
+{
+	int i, c=0, n=strlen(cad);
+	for(i=0;i<n;i++)
+	{
+		if(cad[i]==car[0])
+		{
+			c++;
+		}
+	}
+	cout<<c;
+}
+void main()
+{
+	char cad[50], car[1];
+	cout<<"introducir palabra: ";
+	gets(cad);
+	cout<<"introducir el caracter: ";
+	gets(car);
+	contarcaracter(cad, car);
+	getch();
+}
+
+6.- //6. Desarrolle una función que devuelva una cadena en minusculas.
+# include <iostream>
+# include <conio.h>
+# include <string.h>
+using namespace std;
+void generarminuscula(char cad[])
+{
+	int i, c=0, n=strlen(cad);
+	for(i=0;i<n;i++)
+	{
+		if(cad[i]=='A')
+		{
+			cad[i]='a';
+		}
+		if(cad[i]=='B')
+		{
+			cad[i]='b';
+		}
+		if(cad[i]=='C')
+		{
+			cad[i]='c';
+		}
+		if(cad[i]=='D')
+		{
+			cad[i]='d';
+		}
+		if(cad[i]=='E')
+		{
+			cad[i]='e';
+		}
+		if(cad[i]=='F')
+		{
+			cad[i]='f';
+		}
+		if(cad[i]=='G')
+		{
+			cad[i]='g';
+		}
+		if(cad[i]=='H')
+		{
+			cad[i]='h';
+		}
+		if(cad[i]=='I')
+		{
+			cad[i]='i';
+		}
+		if(cad[i]=='J')
+		{
+			cad[i]='j';
+		}
+		if(cad[i]=='K')
+		{
+			cad[i]='k';
+		}
+		if(cad[i]=='L')
+		{
+			cad[i]='l';
+		}
+		if(cad[i]=='M')
+		{
+			cad[i]='m';
+		}
+		if(cad[i]=='N')
+		{
+			cad[i]='n';
+		}
+		if(cad[i]=='O')
+		{
+			cad[i]='o';
+		}
+		if(cad[i]=='P')
+		{
+			cad[i]='p';
+		}
+		if(cad[i]=='Q')
+		{
+			cad[i]='q';
+		}
+		if(cad[i]=='r')
+		{
+			cad[i]='r';
+		}
+		if(cad[i]=='S')
+		{
+			cad[i]='s';
+		}
+		if(cad[i]=='T')
+		{
+			cad[i]='t';
+		}
+		if(cad[i]=='U')
+		{
+			cad[i]='u';
+		}
+		if(cad[i]=='V')
+		{
+			cad[i]='v';
+		}
+		if(cad[i]=='W')
+		{
+			cad[i]='w';
+		}
+		if(cad[i]=='X')
+		{
+			cad[i]='x';
+		}
+		if(cad[i]=='Y')
+		{
+			cad[i]='y';
+		}
+		if(cad[i]=='Z')
+		{
+			cad[i]='z';
+		}
+		cout<<cad[i];
+	}
+}
+void main()
+{
+	char cad[50];
+	cout<<"introducir palabra: ";
+	gets(cad);
+	generarminuscula(cad);
+	getch();
+}
+
