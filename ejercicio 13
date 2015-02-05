@@ -1,0 +1,127 @@
+#include "stdafx.h"
+#include <iostream>
+#include <conio.h>
+#include <string.h>
+#include <ctype.h>
+#include<iomanip>
+#define FIL 10
+#define COL 10
+using namespace std;
+struct matriz
+{
+int mat[FIL][COL];
+};
+void mostrarMat(matriz m[][COL], int n);
+void cambio_ds(matriz m[][COL], int n,int j);
+void cambio (matriz A[][COL], int n, matriz B[][COL]);
+void cambio_dp(matriz m[][COL], int n,int j);
+void cargarMat(matriz m[][COL], int n);
+void intercambioMat(matriz m[][COL],int n);
+ 
+void cargarMat(matriz m[][COL], int n)
+{
+int i,j,k,l;
+for(i=0;i<n;i++)
+{
+for(j=0;j<n;j++)
+{
+for(k=0;k<n;k++)
+{
+for(l=0;l<n;l++)
+{
+cout<<"m["<<i<<"]["<<j<<"].mat["<<k<<"]["<<l<<"]:";
+cin>>m[i][j].mat[k][l];
+cout<<endl;
+}
+}
+}
+}
+}
+void cambio (matriz A[][COL], int n, matriz B[][COL])
+{int i, j;
+matriz aux;
+for(i=0;i<n/2;i++)
+{for(j=0;j<n/2;j++)
+{
+aux=A[i][j];
+A[i][j]=B[i][j];
+B[i][j]=aux;
+}
+}
+}
+void cambio_dp(matriz m[][COL], int n,int j)
+{int i;
+matriz aux;
+for(i=0;i<n/2;i++)
+{aux= m[i][i];
+m[i][i]= m[n-1-i][n-1-i];
+m[n-1-i][n-1-i]=aux;
+}
+}
+void cambio_ds(matriz m[][COL], int n , int j)
+{
+int i;
+matriz aux;
+for(i=0;i<n/2;i++)
+{
+aux=m[i][n-1-i];
+m[i][n-1-i]=m[n-1-i][i];
+m[n-1-i][i]=aux;
+}
+}
+
+void intercambioMat(matriz m[][COL],int n)
+{
+int i, j;
+for(i=0;i<n/2;i++)
+{
+cambio(m,n, m);
+//cambio(m[i][i],n, m[n-1-i][n-1-i]);
+}
+for(i=0;i<n/2;i++)
+{
+cambio(m,n, m);
+//cambio(m[n-1-i][i],n, m[i][n-1-i])
+}
+for(i=0;i<n/2;i++)
+{
+cambio_dp(m,n,j);
+cambio_ds(m,n,j);
+//cambio_dp(m[i][i],n);
+//cambio_ds(m[n-i-1][i],n);
+}
+}
+void mostrarMat(matriz m[][COL], int n)
+{
+int i, j,k,l;
+for(i=0;i<n;i++)
+{
+for(j=0;j<n;j++)
+{
+for(k=0;k<n;k++)
+{
+for(l=0;l<n;l++)
+{
+cout<<m[i][j].mat[k][l]<<" ";
+}
+cout<<" ";
+}
+cout<<endl;
+}
+cout<<endl;
+}
+cout<<endl;
+}
+ 
+void main()
+{
+int n; 
+matriz m[FIL][COL];
+cout<<"ingrese la cantidad de fila";
+cin>>n;
+
+cargarMat(m,n);
+intercambioMat(m,n);
+mostrarMat(m,n);
+getch();
+}
