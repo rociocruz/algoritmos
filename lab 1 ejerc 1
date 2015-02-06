@@ -1,0 +1,36 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+using namespace std;
+
+void secuenciafibonacci (int m);
+int main()
+{int m;
+
+do
+
+{
+	 cout<<"Ingrese hasta que numero fibo quiere mostrar: ";
+	 cin>>m;
+	}while(m<4);
+	 secuenciafibonacci(m);
+	 getch();
+	 return 0;
+}
+
+ void secuenciafibonacci(int m)
+
+{int a=-1,b=1,c=0,res,i=0;
+
+ while(i<m)
+
+       {res=a+b+c;
+		a=b;
+        b=c;
+        c=res;
+        cout<<res<<"\t";
+        i++;
+
+       }
+}
+
