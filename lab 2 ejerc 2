@@ -1,0 +1,75 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include "stdlib.h"
+#include <string>
+#define N 30
+
+using namespace std;
+struct reg{
+	int id;
+	string desc;
+	float p;
+	int cant;
+	float cos;
+	float t;
+};
+
+void mostrar(reg v[],int n,);
+void cargar(reg v[],int n);
+
+
+
+
+void main()
+{ reg v[N];
+int n;
+cout<<"ingrese cant: ";
+cin>>n;
+cargar(v,n);
+mostrar(v,n);
+
+}
+
+
+void cargar(reg v[],int n)
+{int i;
+for (i=0;i<n;i++)
+{cout<<"ingrese id: ";
+cin>>v[i].id;
+cout<<"ingrese descripcion: ";
+getline(cin,v[i].desc);
+getline(cin,v[i].desc);
+cout<<"ingrese precio: ";
+cin>>v[i].p;
+cout<<"ingrese cant: ";
+cin>>v[i].cant;
+cout<<"ingrese costo: ";
+cin>>v[i].cos;
+}}
+
+
+void mostrar(reg v[],int n)
+{int i;
+float tc=0,tp=0,tco=0;
+float t;
+cout<<"===========================================";
+		cout<<endl<<"      **REPORTE DE PRODUCTO**          ";
+		cout<<endl<<"===========================================";
+		cout<<endl<<"id\tdescrip\tprecio\tcantidad\tcosto";
+		cout<<endl<<"===========================================";
+
+	{for(i=0;i<n;i++)
+		{v[i].t =v[i].p * v[i].cant;
+		tp= tp+v[i].p;
+		tc=tc+v[i].cant;
+		tco=tco+v[i].cos;
+
+		
+		cout<<endl<<v[i].id<<"\t"<<v[i].desc<<"\t"<<v[i].p<<"\t"<<v[i].cant<<"\t"<<v[i].cos;
+	}}
+	cout<<endl<<"---------------------------------------------------";
+	cout<<endl<<"\t\t\t"<<tp<<"\t"<<tc<<"\t"<<tco<<endl;
+
+}
+
