@@ -1,0 +1,1593 @@
+#include "stdio.h"
+#include <string>
+#include "stdlib.h"
+#include <stdlib.h>
+#include <iomanip>
+
+
+
+
+
+
+#include <iostream>
+using namespace std;
+
+struct examen
+{
+	int idalumno;
+	int idtema;
+	int idmateria;
+	float nota;
+};
+
+
+struct Alumno
+{
+	int idalumno;
+	int idmateria;
+	char nombrealumno[30];
+	char apellidoalumno[30];
+	int idcarrera;
+	int pin;
+	bool estado;
+};
+
+
+struct Docente
+{
+	int iddocente;
+	char nombredocente[30];
+	char apellidodocente[30];
+	int idmateria;
+	int pindocente;
+	bool estado;
+};
+
+struct Materia
+{
+	int idmateria;
+	char materia[30];
+	bool estado;
+};
+
+
+
+
+struct pregunta
+{
+	char enunciado[90];
+	char opcion1[60];
+	char opcion2[60];
+	char opcion3[60];
+	int respuesta;
+	bool estado;
+	int idmateria;
+	int idtema;
+	int idalumno;
+};
+
+
+
+
+
+void creararchivoPreguntas()
+{
+	FILE *ptr;
+	ptr=fopen("Preguntas.dat","wb");
+	fclose(ptr);
+}
+
+
+void pedir_datosPregunta(pregunta &reg)
+{
+	
+	cout<<"INGRESAR CODIGO DE MATERIA" <<endl;
+	cin>>reg.idmateria;
+	cout<<"INGRESAR NUMERO DE TEMA AL QUE PERTENECE:" <<endl;
+	cin>>reg.idtema;
+
+	cout<<"INGRESAR ENUNCIADO DE PREGUNTA: ";
+	do
+	{
+		gets(reg.enunciado);
+	}while(strlen(reg.enunciado)==0);
+	cout<<"INGRESAR OPCION 1: ";
+	do
+	{
+		gets(reg.opcion1);
+	}while(strlen(reg.opcion1)==0);
+	cout<<"INGRESAR OPCION 2: ";
+	do
+	{
+		gets(reg.opcion2);
+	}while(strlen(reg.opcion2)==0);
+	cout<<"INGRESAR OPCION 3: ";
+	do
+	{
+		gets(reg.opcion3);
+	}while(strlen(reg.opcion3)==0);
+	cout<<"INGRESAR RESPUESTA CORRECTA: ";
+	cin>>reg.respuesta;
+	reg.estado=true;
+}
+
+void adicionar_registroPregunta()
+{ 
+	pregunta reg;
+	FILE *ptr;
+	ptr=fopen("Preguntas.dat","ab");
+	pedir_datosPregunta(reg);
+	fwrite(&reg,sizeof(reg),1,ptr);
+	fclose(ptr);
+}
+
+
+void mostrar_registroPregunta(pregunta reg)
+{
+	cout<<endl <<"ID MATERIA: "<<reg.idmateria <<"     ID TEMA: "<<reg.idtema <<endl <<"PREGUNTA: "<<reg.enunciado <<endl <<"1.-" <<reg.opcion1 <<endl <<"2.-" <<reg.opcion2 <<endl <<"3.-" <<reg.opcion3 <<endl <<"Respuesta Correcta: " <<reg.respuesta <<endl;
+}
+
+void reporte_preguntas()
+{
+	pregunta reg;
+	int i=1;
+	FILE *ptr;
+	ptr=fopen("Preguntas.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		cout<<" \t\t Preguntas "<<endl;
+		if(reg.estado)
+		{
+				while(!feof(ptr))
+			{	
+				cout<<"Pregunta: "<<i<<endl;
+				mostrar_registroPregunta(reg);
+				cout<<endl;
+				fread(&reg,sizeof(reg),1,ptr);
+				i++;
+			}
+		}
+	}
+	fclose(ptr);
+}
+
+void creararchivoMateria()
+{
+	FILE *ptr;
+	ptr=fopen("Materia.dat","wb");
+	fclose(ptr);
+}
+
+
+void pedir_datosMateria(Materia &reg)
+{
+	
+	cout<<"Ingrese Id Materia: ";
+	cin>>reg.idmateria;
+	cout<<"Ingresar Nombre De Materia: ";
+	do
+	{
+		gets(reg.materia);
+	}while(strlen(reg.materia)==0);
+	reg.estado=true;
+}
+
+void adicionar_registroMateria()
+{ 
+	Materia reg;
+	FILE *ptr;
+	ptr=fopen("Materia.dat","ab");
+	pedir_datosMateria(reg);
+	fwrite(&reg,sizeof(reg),1,ptr);
+	fclose(ptr);
+}
+
+
+void mostrar_registroMateria(Materia reg)
+{
+	cout<<endl<<reg.idmateria<<"\t"<<reg.materia;
+}
+
+void reporte_materia()
+{
+	Materia reg;
+	FILE *ptr;
+	ptr=fopen("Materia.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo Materia no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		cout<<"Id Materia\t Materia \t"<<endl;
+		while(!feof(ptr))
+		{	
+			mostrar_registroMateria(reg);
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+	}
+	fclose(ptr);
+}
+
+void dar_examen(Alumno A,int nrotema)
+{
+	bool existenpreguntasdeltema=false;
+	int op;
+	float nota=0;
+	float correctas=0;
+	float res;
+	int cant=0;
+	FILE *ptr;
+	pregunta P;
+	examen E;
+	ptr=fopen("Preguntas.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo Preguntas no existe";
+	}
+	else
+	{
+		
+		
+			fread(&P,sizeof(P),1,ptr);
+			while(!feof(ptr))
+			{
+				if((A.idmateria==P.idmateria) &&(nrotema==P.idtema))
+				{
+					existenpreguntasdeltema=true;
+					cant++;
+					cout<<endl <<P.enunciado <<endl;
+					cout<<P.opcion1 <<endl <<P.opcion2 <<endl <<P.opcion3 <<endl;
+					cout<<"Respuesta: ";
+					cin>>op;
+					if(op==P.respuesta)
+					{
+						correctas++;
+					}
+					cout<<endl;
+				}
+				fread(&P,sizeof(P),1,ptr);
+			}
+			if(existenpreguntasdeltema==true)
+			{
+				if(correctas==0)
+				{
+					cant=1;
+				}
+
+				
+				res=(correctas/cant);
+				E.nota=res*100;
+				E.idalumno=A.idalumno;
+				E.idtema=nrotema;
+				E.idmateria=A.idmateria;
+				adicionar_registroNotas(E); //adicionar registro al registro de notas
+			}
+			else
+			{
+				cout<<"NO EXISTEN PREGUNTAS CARGADAS PARA ESTE TEMA";
+			}
+			fclose(ptr);
+		
+	}
+
+	
+}
+
+
+void Reportederendimiento(Alumno A)
+{
+	FILE *ptr;
+	examen E;
+	ptr=fopen("Notas.dat","rb"); //reporte->modo rb
+	if(ptr==NULL)
+	{
+		cout<<endl <<"El Registro de Notas No Fue Creado" <<endl;
+	}
+	else
+	{
+		cout<<"CODIGO DE MATERIA	NRO TEMA		NOTA"<<endl;
+		fread(&E,sizeof(E),1,ptr);
+		while(!feof(ptr))
+		{
+			if(A.idalumno==E.idalumno)
+			{
+				cout<<endl<<E.idmateria<<"	            	" <<E.idtema <<"	     	"<<E.nota;
+
+			}
+			fread(&E,sizeof(E),1,ptr);
+		}
+		fclose(ptr);
+	}
+
+}
+
+Alumno obtenernombreporidalumno(int id)
+{
+	FILE *ptr;
+	Alumno reg;
+	ptr=fopen("Alumno.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<endl <<"El Registro de Alumnos No Fue Creado" <<endl;
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(reg.idalumno==id)
+			{
+				fclose(ptr);
+				return reg;
+			}
+
+		fread(&reg,sizeof(reg),1,ptr);
+		}
+		reg.idalumno=-1;
+		fclose(ptr);
+		return reg;
+	}
+}
+void reporte_Notas_De_Temas_Por_Nombre_Estudiante()
+{
+	system("cls");
+	examen reg;
+	Alumno A;
+	FILE *ptr;
+	ptr=fopen("Notas.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo Notas no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		cout<<" \t\t\t\t NOTAS "<<endl<<endl;
+		cout<<"ALUMNO \t                ID MATERIA \t        NOTA"<<endl;
+		
+			while(!feof(ptr))
+			{
+
+				A=obtenernombreporidalumno(reg.idalumno);
+				cout<<A.nombrealumno<<" "<<A.apellidoalumno <<"				"<<reg.idmateria<<"		"<<reg.nota<<endl;
+				fread(&reg,sizeof(reg),1,ptr);
+			}
+			cout<<endl;
+		
+	}
+	fclose(ptr);
+}
+void creararchivoDocente()
+{
+	FILE *ptr;
+	ptr=fopen("Docente.dat","wb");
+	fclose(ptr);
+}
+
+
+void pedir_datosDocente(Docente &reg)
+{
+	
+	cout<<"Ingrese Id Docente: ";
+	cin>>reg.iddocente;
+	cout<<"Ingrese Nombre Docente: ";
+	do
+	{
+		gets(reg.nombredocente);
+	}while(strlen(reg.nombredocente)==0);
+	cout<<"Ingrese Apellido Docente: ";
+	do
+	{
+		gets(reg.apellidodocente);
+	}while(strlen(reg.apellidodocente)==0);
+	cout<<"Ingrese Id Materia: ";
+	cin>>reg.idmateria;
+	cout<<"Ingrese Pin Docente: ";
+	cin>>reg.pindocente;
+	reg.estado=true;
+}
+
+void adicionar_registroDocente()
+{ 
+	Docente reg;
+	FILE *ptr;
+	ptr=fopen("Docente.dat","ab");
+	pedir_datosDocente(reg);
+	fwrite(&reg,sizeof(reg),1,ptr);
+	fclose(ptr);
+}
+
+
+void mostrar_registroDocente(Docente reg)
+{
+	cout<<endl<<reg.iddocente<<"\t  "<<setw(10)<<reg.nombredocente<<" "<<reg.apellidodocente<<"\t"<<setw(10)<<reg.idmateria <<"\t" <<setw(10)<<reg.pindocente;
+}
+
+void reporte_docente()
+{
+	Docente reg;
+	FILE *ptr;
+	ptr=fopen("Docente.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo Docente no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		cout<<"\t\t\t Docentes"<<endl;
+		cout<<"ID DOCENTE \t NOMBRE \t ID MATERIA \t PIN DOCENTE";
+		while(!feof(ptr))
+		{	
+			mostrar_registroDocente(reg);
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+	}
+	fclose(ptr);
+}
+
+Docente buscar_Docente(int iddocent)
+{
+	Docente reg;
+	FILE *ptr;
+	reg.iddocente =-1;
+	ptr=fopen("Docente.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo Docente no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(reg.iddocente==iddocent)
+			{
+				fclose(ptr);
+				return (reg);
+			}
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+	}
+	fclose(ptr);
+	return(reg);
+}
+
+void eliminar_Docente(int iddocente)
+{
+	Docente reg,v[100];
+	FILE *ptr;
+	int cont=0;
+	ptr=fopen("Docente.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"Archivo  Docente no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while (!feof(ptr))
+		{
+			if (reg.iddocente!=iddocente)
+			{
+				v[cont]=reg;
+				cont++;
+			}
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		fclose(ptr);
+		ptr=fopen("Docente.dat","wb");
+		for(int i=0;i<cont;i++)
+		{
+			fwrite(&v[i],sizeof(v[i]),1,ptr);
+		}
+	}
+	fclose(ptr);
+}
+
+
+void modificarDocente(int iddocent)
+{
+	Docente reg;
+	FILE *ptr;
+	ptr=fopen("Docente.dat","r+b");
+	if(ptr==NULL)
+	{
+	}
+
+}
+
+ void eliminar_logicaDocente(int iddocent)
+ {
+	int i=0;
+	Docente reg;
+	FILE *ptr;
+	ptr=fopen("Docente.dat","r+b");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo no existe";
+	}
+	else 
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(reg.estado==true)
+			{
+				if(reg.iddocente==iddocent)
+				{
+					reg.estado=false;
+					fseek(ptr,i*sizeof(reg),SEEK_SET);
+					fwrite(&reg,sizeof(reg),1,ptr);
+				}
+			}
+		fread(&reg,sizeof(reg),1,ptr);
+		i++;
+		}
+	}
+	fclose(ptr);
+}
+
+ Docente Verificar_Pin_Docente(int Pin)
+{
+	Docente reg;
+	FILE *ptr;
+	ptr=fopen("Docente.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if((reg.pindocente==Pin)&&(reg.estado==true))
+			{
+				fclose(ptr);
+				return (reg);
+			}
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		reg.pindocente=-1;
+
+	}
+	fclose(ptr);
+	return(reg);
+}
+
+void creararchivoAlumno()
+{
+	FILE *ptr;
+	ptr=fopen("Alumno.dat","wb");
+	fclose(ptr);
+}
+
+
+void pedir_datosAlumno(Alumno &reg)
+{
+	
+	cout<<"INGRESAR REGISTRO ALUMNO: ";
+	cin>>reg.idalumno;
+	cout<<"INGRESAR NOMBRE: ";
+	do
+	{
+		gets(reg.nombrealumno);
+	}while(strlen(reg.nombrealumno)==0);
+	cout<<"INGRESAR APELLIDO: ";
+	do
+	{
+		gets(reg.apellidoalumno);
+	}while(strlen(reg.apellidoalumno)==0);
+	cout<<"INGRESAR CODIGO DE CARRERA: ";
+	cin>>reg.idcarrera;
+	cout<<"INGRESAR NUEVO PIN: ";
+	cin>>reg.pin;
+	cout<<"INGRESAR CODIGO PARA MATERIA: ";
+	cin>>reg.idmateria;
+	reg.estado=true;
+}
+
+void adicionar_registroalumno()
+{ 
+	Alumno reg;
+	FILE *ptr;
+	ptr=fopen("Alumno.dat","ab");
+	pedir_datosAlumno(reg);
+	fwrite(&reg,sizeof(reg),1,ptr);
+	fclose(ptr);
+}
+
+
+void mostrar_registroalumno(Alumno reg)
+{
+	
+	
+	cout<<endl<<reg.idalumno<<setw(10)<<reg.nombrealumno<<setw(10)<<reg.apellidoalumno<<setw(15)<<reg.idcarrera;
+}
+
+void reporte_alumno()
+{
+	system("cls");
+	Alumno reg;
+	FILE *ptr;
+	ptr=fopen("Alumno.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		cout<<"ID ALUMNO\t   NOMBRE\t      ID CARRERA "<<endl;
+		while(!feof(ptr))
+		{	
+			mostrar_registroalumno(reg);
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		cout<<endl;
+	}
+	fclose(ptr);
+}
+
+Alumno buscar_alumno(int idalumno)
+{
+	Alumno reg;
+	FILE *ptr;
+	ptr=fopen("Alumno.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(reg.idalumno=idalumno)
+			{
+				fclose(ptr);
+				return (reg);
+			}
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+	}
+	fclose(ptr);
+	reg.idalumno = -1;
+	return(reg);
+}
+
+void eliminar_alumno(int idalumno)
+{
+	Alumno reg,v[100];
+	FILE *ptr;
+	int cont=0;
+	ptr=fopen("Alumno.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"Archivo no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while (!feof(ptr))
+		{
+			if (reg.idalumno!=idalumno)
+			{
+				v[cont]=reg;
+				cont++;
+			}
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		fclose(ptr);
+		ptr=fopen("Alumno.dat","wb");
+		for(int i=0;i<cont;i++)
+		{
+			fwrite(&v[i],sizeof(v[i]),1,ptr);
+		}
+	}
+	fclose(ptr);
+}
+
+void modificaralumno(int idalumno)
+{
+	Alumno reg;
+	FILE *ptr;
+	ptr=fopen("Alumno.dat","r+b");
+	if(ptr==NULL)
+	{
+	}
+
+}
+
+ void eliminar_logicaalumno(int idalumno)
+ {
+	int i=0;
+	Alumno reg;
+	FILE *ptr;
+	ptr=fopen("Usuario.dat","r+b");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo no existe";
+	}
+	else 
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(reg.estado==true)
+			{
+				if(reg.idalumno==idalumno)
+				{
+					reg.estado=false;
+					fseek(ptr,i*sizeof(reg),SEEK_SET);
+					fwrite(&reg,sizeof(reg),1,ptr);
+				}
+			}
+		fread(&reg,sizeof(reg),1,ptr);
+		i++;
+		}
+	}
+	fclose(ptr);
+}
+
+
+Alumno Verificar_Pin_Estudiante(int Pin)
+{
+	Alumno reg;
+	FILE *ptr;
+	ptr=fopen("Alumno.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if((reg.pin==Pin)&&(reg.estado==true))
+			{
+				fclose(ptr);
+				return (reg);
+			}
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		reg.pin=-1;
+
+	}
+	fclose(ptr);
+	return(reg);
+}
+
+
+
+void creararchivoNotas()
+{
+	FILE *ptr;
+	ptr=fopen("Notas.dat","wb");
+	fclose(ptr);
+}
+
+void mostrar_registroNotas(examen reg)
+{
+	cout<<endl <<setw(10)<<reg.idalumno<<"\t\t"<<setw(10)<<reg.idtema <<"\t\t"<<setw(7)<<reg.idmateria <<setw(5)<<"\t\t"<<reg.nota;
+}
+
+
+
+void reporte_Notas()
+{
+	system("cls");
+	examen reg;
+	FILE *ptr;
+	ptr=fopen("Notas.dat","rb");
+	if(ptr==NULL)
+	{
+		cout<<"El archivo Notas no existe";
+	}
+	else
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		cout<<" \t\t\t\t NOTAS "<<endl<<endl;
+		cout<<"ID ALUMNO \t          ID TEMA \t        ID MATERIA \t        NOTA"<<endl;
+		
+			while(!feof(ptr))
+			{	
+				mostrar_registroNotas(reg);
+				fread(&reg,sizeof(reg),1,ptr);
+			}
+			cout<<endl;
+		
+	}
+	fclose(ptr);
+}
+
+void adicionar_registroNotas(examen reg)
+{ 
+	FILE *ptr;
+	ptr=fopen("Notas.dat","ab");
+	fwrite(&reg,sizeof(reg),1,ptr);
+	fclose(ptr);
+}
+
+
+
+#include "Metodos.h"
+#include <iostream>
+using namespace std;
+
+
+void main()
+{
+	
+	int opp,ope,op_temas,opd,op_admin;
+	int pinest,pindoc;
+	bool ciclo,ciclo2;
+	Alumno student;
+	Docente docente;
+	do
+	{
+		cout<<"\t\t\t MENU PRINCIPAL" <<endl;
+		cout<<"1.-Estudiante" <<endl;
+		cout<<"2.-Docente" <<endl;
+		cout<<"3.-Modo Administrador"<<endl;
+		cout<<"4.-Salir"<<endl;
+		cout<<"Opcion: ";
+		cin>>opp;
+		system("cls");
+		switch (opp)
+		{
+			case 1:
+				ciclo=true;
+			do{
+				cout<<endl<<"INGRESAR PIN DE ESTUDIANTE: ";
+				cin>>pinest;
+				student=Verificar_Pin_Estudiante(pinest); //en Alumno.h
+				if(student.pin==-1)
+				{
+					cout<<"Pin No Registrado"<<endl;
+					ciclo=false;
+					system("pause");
+					system("cls");
+				}
+			   }while((student.pin==-1)&&(ciclo==true));
+		 
+			if(ciclo==true)
+			{
+			do{
+
+					system("cls");
+					cout<<"NOMBRE: "<<student.nombrealumno <<" "<<student.apellidoalumno <<endl <<"CODIGO: "<<student.idalumno <<endl<<endl; 	
+					cout<<"\t\t MENU ESTUDIANTE" <<endl;
+					cout<<"1.-Temas Teoricos"<<endl;
+					cout<<"2.-Reporte De Rendimiento Por Estudiante" <<endl;
+					cout<<"3.-Examen" <<endl;
+					cout<<"4.-Salir" <<endl;
+					cout<<"opcion ";
+					cin>>ope;
+					system("cls");
+					switch(ope)
+					{
+						
+						case 1:
+						
+							do{
+								cout<<"\t\t TEMAS "<<endl;
+								cout<<"1.-Introduccion A La Programacion" <<endl;
+								cout<<"2.-Numeracion Y Metodos" <<endl;
+								cout<<"3.-Compilador" <<endl;
+								cout<<"4.-Estructura De Un Programa" <<endl;
+								cout<<"5.-Tipos De Datos" <<endl;
+								cout<<"6.-Operados" <<endl;
+								cout<<"7.-Vectores"<<endl;
+								cout<<"8.-Matrices" <<endl;
+								cout<<"9.-String Y Cadenas" <<endl;
+								cout<<"10.-Estructuras" <<endl;
+								cout<<"11.-Archivos" <<endl;
+								cout<<"12.-Salir" <<endl;
+								cout<<"Opcion: ";
+								cin>>op_temas;
+								system("cls");
+								switch (op_temas)
+									{
+										case 1:
+											cout<<"EL lenguaje C es el resultado de un proceso de desarrollo que inició con un lenguaje denominado BCPL. Este influenció a otro llamado B (inventado por Ken Thompson). En los años 70; éste lenguaje llevó a la aparición del C."; 
+											cout<<"Con la popularidad de las microcomputadoras muchas compañias comenzarona implementar su propio C por lo cual surgieron discrepancias entre sí.Por esta razón ANSI (American National Standars Institute, por sus siglas en inglés), estableció un comité en 1983 para crear una definición no ambigüa del lenguaje C e"; 
+											cout<<"independiente de la máquina que pudiera utilizarse en todos los tipos de C.Algunos de las C existentes son:" <<endl;
+											cout<<"-Quick C" <<endl;
+											cout<<"-C++" <<endl;
+											cout<<"-Turbo C" <<endl;
+											cout<<"-Turbo C++" <<endl;
+											cout<<"-Borland C" <<endl;
+											cout<<"-Borland C++" <<endl;
+											cout<<"-Microsoft C" <<endl;
+											cout<<"-etc."<<endl;
+											cout<<"Este manual se basa en el C estandar el cual puede utilizarse en todos los tipos de C en lenguaje. C es un lenguaje de programación de nivel medio ya que combina los elementos del lenguaje de alto nivel con la funcionalidad del ensamblador." <<endl;
+											cout<<"Su característica principal es ser portable,es decir,es posible adaptar los programas escritos para un tipo de computadora en otra. Otra de sus características principales es el ser esctructurado, es decir, el programa se divide en módulos (funciones) independientes entre sí." <<endl;
+											cout<<"El lenguaje C inicialmente fué creado para la programación de: "<<endl;
+											cout<<"-Sistemas operativos" <<endl;
+											cout<<"-Intérpretes" <<endl;
+											cout<<"-Editores" <<endl;
+											cout<<"-Ensambladores" <<endl;
+											cout<<"-Compiladores" <<endl;
+											cout<<"-Administradores de bases de datos." <<endl;
+											cout<<"Actualmente, debido a sus caraterísticas, puede ser utilizado paratodo tipo de programas." <<endl;
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 2:
+											cout<<"\t----------NUMERACION Y METODOS---------------"<<endl;
+											cout<<"EL SISTEMA DECIMAL (Base 10):Este sistema está formado por diez simbolos, llamados números arabicos."<<endl;
+											cout<<"También es llamado sistema de base 10. Usando los diez símbolos separadamente 0, 1, 2, 3, ..., 9 nos permite"<<endl;
+											cout<<"representar el valor de los números en unidades individuales, pero para representar mas de nueve números es"<<endl;
+											cout<<"necesario combinarlos. Cuando usamos símbolos en combinación, el valor de cada uno de ellos depende de su "<<endl;
+											cout<<"posición con respecto al punto decimal, designando así un símbolo para las unidades, otro para las decenas, "<<endl;
+											cout<<"otro para las centenas, otro para los millares (de miles, no de millon), en adelante."<<endl;
+											cout<<"EL SISTEMA BINARIO (Base 2):Es un sistema de números de base igual a 2, lo que nos lleva a representar los"<<endl;
+											cout<<"números con sólo dos símbolos distintos: 0 y 1.Es usado para representar números del mismo modo que el "<<endl;
+											cout<<"sistema decimal, donde cada simbolo puede ser usado individualmente o en combinación. Por ello con sólo"<<endl;
+											cout<<"un símbolo en sistema binario podemos representar apenas dos valores (cero y uno) a diferencia del sistema"<<endl;
+											cout<<"decimal donde un sólo símbolo podía representar hasta diez. Combinando dos símbolos binarios logramos generar"<<endl;
+											cout<<"los cuatro primeros valores del sistema binario, que se muestran abajo:"<<endl;
+											cout<<"EL SISTEMA OCTAL (Base 8):Este sistema es muy usado en trabajos digitales, por su fácil conversión de y "<<endl;
+											cout<<"hacia el sistema binario. Tiene su base igual a ocho, lo que genera la necesidad de ocho símbolos para "<<endl;
+											cout<<"representar valores en este sistema y para esta finalidad se seleccionaron los primeros ocho símbolos "<<endl;
+											cout<<"del sistema decimal: 0, 1, 2, 3, 4, 5, 6 y 7."<<endl;
+											cout<<"SISTEMA HEXADECIMAL (Base 16):Este sistema requiere el uso de 16 símbolos, siendo formado por los mismos"<<endl;
+											cout<<"empleados en el sistema decimal y seis letras del alfabeto arábico comprendidas entre A y F. Dado que las"<<endl;
+											cout<<"computadoras usualmente agrupan conjuntos de bits en múltiplos de cuatro este sistema permite representar "<<endl;
+											cout<<"a cada grupo con un simple símbolo. Por ello es que es tan usado en estos días. En la tabla de abajo se "<<endl;
+											cout<<"muestra la relación entre los sistemas."<<endl;
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 3:
+											cout<<"-----------------	COMPILADOR    ---------------------"<<endl;
+											cout<<"Un compilador es un programa informático que traduce un programa escrito en un lenguaje de"<<endl;
+											cout<<"programación a otro lenguaje de programación, generando un programa equivalente que la"<<endl;
+											cout<<"máquina será capaz de interpretar. Usualmente el segundo lenguaje es lenguaje de máquina,"<<endl;
+											cout<<"pero también puede ser un código intermedio (bytecode), o simplemente texto. Este proceso"<<endl;
+											cout<<"de traducción se conoce como compilación."<<endl;
+											cout<<"Un compilador es un programa que permite traducir el código fuente de un programa en"<<endl;
+											cout<<"lenguaje de alto nivel, a otro lenguaje de nivel inferior (típicamente lenguaje de máquina)."<<endl;
+											cout<<"De esta manera un programador puede diseñar un programa en un lenguaje mucho más cercano"<<endl;
+											cout<<"a como piensa un ser humano, para luego compilarlo a un programa más manejable por una computadora."<<endl;
+											cout<<"Como parte importante de este proceso de traducción, el compilador informa a su usuario de la "<<endl;
+											cout<<"presencia de errores en el programa fuente."<<endl;
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 4:
+											cout<<"--------------- Estructura de un programa en C++ -------------"<<endl;
+											cout<<"Librería"<<endl;
+											cout<<"En C++, la biblioteca estándar es una colección de Clases y funciones, escritas en el"<<endl;
+											cout<<"núcleo del lenguaje. La biblioteca estándar proporciona varios contenedores genéricos,"<<endl;
+											cout<<"funciones para utilizar y manipular esos contenedores, funciones objeto, cadenas y flujos "<<endl;
+											cout<<"genéricos (incluyendo E/S interactiva y de archivos) y soporte para la mayoría de las "<<endl;
+											cout<<"características del lenguaje. La biblioteca estándar de C++ también incorpora la ISO C90"<<endl;
+											cout<<"biblioteca estándar de C. Las características de la biblioteca estándar están declaradas en "<<endl;
+											cout<<"el espacio de nombres (namespace) std. "<<endl;
+											cout<<"La Standard Template Library es un subconjunto de la biblioteca estándar de C++ que"<<endl;
+											cout<<"contiene los contenedores, algoritmos, iteradores, funciones objeto, etc; aunque algunas"<<endl;
+											cout<<"personas utilizan el término STL indistintamente con la biblioteca estándar de C++."<<endl;
+											cout<<endl<<"#include ""stdafx.h" "–Abrir programa y "<<endl;
+											cout<<"#include ""stdio.h" " -Archivos"<<endl;
+											cout<<"#include <sstream>  -Limpiar pantalla"<<endl;
+											cout<<"#include <string>   -Cadena de caracteres"<<endl;
+											cout<<"#include ""conio.h""  -Getch y pausa"<<endl;
+											cout<<"#include <iomanip>  -Para dar espacios"<<endl;
+											cout<<"#include ""math.h""   -Funciones matematicas"<<endl;
+											cout<<"#include <iostream> -Input/Output cin, cout"<<endl;
+											cout<<endl<<endl<<"  *	PROGRAMA PRINCIPAL"<<endl;
+											cout<<"Un programa de C++ lleva las partes fundamentales del programador:"<<endl;
+											cout<<"ejemplo:"<<endl;
+											cout<<"//hola mundo"<<endl;
+											cout<<"#include <iostream>"<<endl;
+											cout<<"int main ()"<<endl;
+											cout<<"{"<<endl;
+											cout<<"  std :: cout << ""Hello World!"" ;"<<endl;
+											cout<<"return 0;"<<endl;
+											cout<<"}"<<endl;
+											cout<<"Linea 1: // mi primer programa en C ++Dos señales de barra indican que el resto de la"<<endl;
+											cout<<"linea es un comentario introducido por el programador, pero que no tiene ningun efecto sobre"<<endl;
+											cout<<"el comportamiento del programa. Los programadores los usan para incluir breves explicaciones "<<endl;
+											cout<<"u observaciones relativas al código o programa. En este caso, es una breve descripcion"<<endl;
+											cout<<"introductoria del programa."<<endl;
+											cout<<endl<<"Línea 2: #include <iostream>Las lineas que comienzan con una almohadilla ( # ) son directivas"<<endl;
+											cout<<"leídos e interpretados por lo que se conoce como el preprocesador . Son lineas especiales"<<endl;
+											cout<<"interpretados antes de la compilación del programa comienza en si. En este caso, la directiva "<<endl;
+											cout<<"#include <iostream> , encarga al preprocesador para incluir una sección de código C ++ estándar,"<<endl;
+											cout<<"conocido como iostream cabecera , que permite realizar operaciones de entrada y salida estándar, "<<endl;
+											cout<<"tales como escribir la salida de este programa (Hola Mundo) A la pantalla."<<endl;
+											cout<<endl<<"Línea 3: Una linea en blanco.Las lineas en blanco no tienen efecto en un programa. Ellos"<<endl; 
+											cout<<"simplemente mejorar la legibilidad del código."<<endl;
+											cout<<endl<<"Linea 4: int main ()Esta línea inicia la declaracion de una funcion. En esencia, una funcion"<<endl;
+											cout<<"es un grupo de instrucciones de código que se dan un nombre: en este caso, esto le da el nombre de"<<endl;
+											cout<<"*principal* para el grupo de instrucciones de código que siguen. Funciones serán discutidos en"<<endl;
+											cout<<"detalle en un capítulo posterior, pero en esencia, su definición se introduce con una sucesion de "<<endl;
+											cout<<"un tipo ( int ), un nombre ( principal ) y un par de paréntesis ( () ), incluyendo opcionalmente "<<endl;
+											cout<<"parametros. La funcion llamada principal es una función especial en todos los programas de C ++;es"<<endl;
+											cout<<"la función llamada cuando se ejecuta el programa. La ejecución de todos los programas en C ++ comienza"<<endl;
+											cout<<"con la principal función, independientemente de que la función se encuentra realmente dentro del código."<<endl;
+											cout<<endl<<"Lineas 5 y 7: { y }La llave de apertura ( { ) en la linea 5 indica el comienzo del principal"<<endl;
+											cout<<"definicion de la función s, y la llave de cierre ( } ) en la línea 7, indica su fin. Todo entre"<<endl;
+											cout<<"estas llaves es el cuerpo de la función que define lo que sucede cuandoprincipal se llama. Todas las"<<endl;
+											cout<<"funciones utilizan llaves para indicar el comienzo y el final de sus definiciones."<<endl;
+											cout<<endl<<"Línea 6: std :: cout <<; ""Hello World!""Esta línea es una declaracion C ++. Una declaracion es"<<endl;
+											cout<<"una expresión que puede realmente producir algún efecto.Es la carne de un programa, especificando"<<endl;
+											cout<<"su comportamiento real. . Las declaraciones se ejecutan en el mismo orden en que aparecen en el "<<endl;
+											cout<<"cuerpo de una funcion Esta declaración tiene tres partes: En primer lugar, std :: cout, que"<<endl;
+											cout<<"identifica el st andar d c haracter fuera poner dispositivo (por lo general, se trata de la pantalla"<<endl;
+											cout<<"del ordenador). En segundo lugar, el operador de inserción ( << ), que indica que lo que sigue se"<<endl;
+											cout<<"inserta en std :: cout. Por ultimo, una frase entre comillas (""¡Hola"" mundo!""), Es el contenido"<<endl;
+											cout<<"insertado en la salida estándar. Observe que la declaración termina con un punto y coma ( ; ). "<<endl;
+											cout<<"Este personaje marca el final de la declaracion, al igual que el periodo termina una frase en Ingles."<<endl;
+											cout<<"Todas las declaraciones de C ++ deben terminar con un punto y coma. Uno de los errores de sintaxis"<<endl;
+											cout<<"mas comunes en C ++ es olvidar para terminar con una declaración con un punto y coma."<<endl;
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 5:
+											cout<<"---------5.Tipos de datos-----------------"<<endl;
+											cout<<"Un identificador valido es una secuencia de una o mas letras, digitos o caracteres de subrayado(  )."<<endl;
+											cout<<"Los espacios, signos de puntuacion y simbolos no pueden ser parte de un identificador. Ademas, los"<<endl;
+											cout<<"identificadores serán siempre comenzar con una letra."<<endl;
+											cout<<"Tipos de caracteres: Pueden representar un único carácter. El tipo más básico es Char , que "<<endl;
+											cout<<"es un carácter de un byte. También se ofrecen otros tipos de caracteres amplios."<<endl;
+											cout<<"  *Tipos enteros numéricos: Pueden almacenar un valor de número entero, como 7 o 1024 . "<<endl;
+											cout<<"Existen en una variedad de tamaños, y, o bien pueden ser firmados o sin signo , dependiendo"<<endl;
+											cout<<"de si apoyan valores negativos o no."<<endl;
+											cout<<"  *Tipos de coma flotante: Pueden representar valores reales, tales como 3,14 o 0,01 , con "<<endl;
+											cout<<"diferentes niveles de precisión, dependiendo de cuál de los tres tipos de coma flotante se utiliza."<<endl;
+											cout<<"  *Tipo booleano: El tipo boolean, conocido en C ++ como bool , sólo puede representar uno de dos "<<endl;
+											cout<<"estados,verdadera o falsa ."<<endl;
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 6:
+											cout<<"--------------------6.Operadores--------------------"<<endl;
+											cout<<"		*Operador de asignación (=)"<<endl;
+											cout<<"El operador de asignación asigna un valor a una variable."<<endl;
+											cout<<"Esta instrucción asigna el valor entero 5 a la variable x . La operación de asignación se realiza"<<endl; 
+											cout<<"siempre de derecha a izquierda, y nunca a la inversa."<<endl<<endl;
+											cout<<"		*Los operadores aritméticos (+, -, *, /,%)"<<endl;
+											cout<<"+ adicion"<<endl;
+											cout<<"- sustraccion"<<endl;
+											cout<<"* multiplicación"<<endl;
+											cout<<"/ división"<<endl;
+											cout<<"% modulo"<<endl<<endl;
+											cout<<"•	Incremento y decremento (++, -)"<<endl;
+											cout<<"Algunos expresión se puede acortar aún más: el operador de incremento ( ++ ) y el operador "<<endl;
+											cout<<"de disminución ( - ) aumentar o reducir en uno el valor almacenado en una variable. Son equivalentes"<<endl;
+											cout<<"a + = 1 y - = 1 , respectivamente. Por lo tanto:"<<endl<<endl;
+											cout<<"•	Los operadores relacionales y de comparación (==,! =,>, <,> =, <=)"<<endl;
+											cout<<"Dos expresiones pueden ser comparados utilizando operadores relacionales y de igualdad."<<endl; 
+											cout<<"Por ejemplo, para saber si dos valores son iguales o si uno es mayor que el otro . El resultado"<<endl; 
+											cout<<"de esta operación es verdadero o falso (es decir, un valor booleano) Los operadores relacionales en C ++ son:"<<endl;
+											cout<<"==  igual a"<<endl;
+											cout<<"!= no es igual a"<<endl;
+											cout<<"< menos que"<<endl;
+											cout<<">mas que"<<endl;
+											cout<<"<= menor o igual que"<<endl;
+											cout<<">= mayor o igual que"<<endl;
+											cout<<"•	Los operadores lógicos (!, &&, ||)"<<endl;
+											cout<<"El operador ! es el operador ++ C para la operación NOT booleano. Tiene un solo operando, a su"<<endl; 
+											cout<<"derecha, y la invierte, produciendo falsa si su operando es verdadero y cierto si su operando es falsa."<<endl;
+											cout<<"Básicamente, se devuelve el valor booleano opuesto de la evaluación de su operando. Por ejemplo:"<<endl;
+											cout<<"Los operadores lógicos && y || se utilizan en la evaluación de dos expresiones para obtener un solo "<<endl;
+											cout<<"resultado relacional. El operador && corresponde a la operación lógica booleana Y, lo que da verdadero"<<endl;
+											cout<<" si ambos operandos son verdadera y falsade lo contrario. El siguiente panel muestra el resultado del "<<endl;
+											cout<<"operador && evaluar la expresión a && b :"<<endl;
+											cout<<"•	sizeof "<<endl;
+											cout<<"Este operador acepta un parámetro, que puede ser o bien un tipo o una variable, y devuelve el tamaño "<<endl;
+											cout<<"en bytes de ese tipo u objeto."<<endl;
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 7:
+											cout<<"7. Estructuras de Control\n";
+											cout<<"Una declaración C ++ simple es cada una de las instrucciones individuales de un programa, como las declaraciones de variables y \n";
+											cout<<"expresiones vistas en los apartados anteriores. Siempre terminan con un punto y coma ( ; \n"; 
+											cout<<"\n";
+											cout<<"Declaraciones de selección: if y else\n";
+											cout<<"El caso de la palabra clave se utiliza para ejecutar una instrucción o bloque, si, y sólo si, una condición se cumple. Su sintaxis\n";
+											cout<<" es: if (condición) Aquí, la condición es la expresión que se está evaluando. Si esta condición es verdadera, la declaración se ejecuta.\n";
+											cout<<" Si es falso, la declaración no se ejecuta (simplemente se ignora), y el programa continúa justo después de toda la declaración de selección. \n";
+											cout<<"Por ejemplo, el siguiente fragmento de código imprime el mensaje (x 100) , sólo si el valor almacenado en la x variable es de hecho 100:\n";
+											cout<<"\n";
+											cout<<"\n";
+											cout<<"Si x no es exactamente el 100, se omite esta declaración, y no se imprime nada. Si desea incluir más de una sentencia ejecutada cuando \n";
+											cout<<"se cumple la condición, estas declaraciones se incluyen entre llaves ( {} ), formando un bloque:\n";
+											cout<<"\n";
+											cout<<"\n";
+											cout<<"Como de costumbre, la sangría y saltos de línea en el código no tienen ningún efecto, por lo que el código anterior es equivalente a:\n";
+											cout<<"\n";
+											cout<<"Declaraciones de selección con si también puede especificar lo que sucede cuando no se cumple la condición, mediante el uso de la otra \n";
+											cout<<"palabra clave para introducir una declaración alternativa. Su sintaxis es la siguiente: si (condición) sentencia1 demás sentencia2 donde \n";
+											cout<<"sentencia1 se ejecuta en caso de que la condición es verdadera, y en caso de que no lo es, sentencia2 se ejecuta. Por ejemplo:\n";
+											cout<<"\n";
+											cout<<"Declaraciones de iteración (bucles)\n";
+											cout<<"Loops repiten una declaración de un cierto número de veces, o mientras una condición se cumple. Se introducen por las palabras clave , \n";
+											cout<<"mientras que , hacer , y para .\n";
+											cout<<"El bucle while\n";
+											cout<<"El tipo más simple de bucle es el bucle while. Su sintaxis es: while (expresión) El bucle while se limita a repetir la declaración mientras \n";
+											cout<<"que la expresión es verdadera. Si, después de toda ejecución de sentencia , la expresión ya no es así, el bucle termina, y el programa continúa\n";
+											cout<<" a la derecha después del bucle. Por ejemplo, vamos a echar un vistazo a una cuenta regresiva mediante un bucle while:\n";
+											cout<<"\n";
+											cout<<"\n";
+											cout<<"La primera declaración de los principales conjuntos de N a un valor de 10. Este es el primer número de la cuenta atrás.A continuación, el bucle \n";
+											cout<<"while comienza: si este valor cumple la condición n> 0 (que n es mayor que cero), entonces el bloque que sigue la condición se ejecuta, y se repite\n";
+											cout<<" durante el tiempo que la condición ( n> 0 ) permanece siendo . verdadero El proceso entero del programa anterior se puede interpretar \n";
+											cout<<"de acuerdo con la siguiente secuencia de comandos (a partir de principal ):\n";
+											cout<<"\n";
+											cout<<"\n";
+											cout<<"Una cosa a considerar con while-bucles es que el bucle debe terminar en algún momento, y por lo tanto la declaración deberá alterar\n";
+											cout<<"los valores marcados en la condición de alguna manera, con el fin de obligarlo a convertirse falsa en algún momento. De lo contrario,\n";
+											cout<<"el bucle continuará bucle siempre. En este caso, el bucle incluye -N , que disminuye el valor de la variable que se está evaluando en\n";
+											cout<<" la condición ( n ) por uno - esto eventualmente hará que la condición ( n> 0 ) false después de un cierto número de iteraciones de bucle . \n";
+											cout<<"Para ser más específico, después de 10 iteraciones, n se convierte en 0, por lo que la condición ya no es cierto, y terminando el bucle\n";
+											cout<<"while. Tenga en cuenta que la complejidad de este bucle es trivial para un ordenador, y así toda la cuenta atrás se realiza al instante,\n";
+											cout<<" sin cualquier retraso práctica entre elementos de la cuenta (si está interesado, consulte sleep_for para un ejemplo de cuenta \n";
+											cout<<"atrás con retrasos).\n";
+											cout<<"\n";
+											cout<<"El bucle do-while\n";
+											cout<<"Un lazo muy similar es el bucle do-while, cuya sintaxis es: do while (condición); se comporta como un bucle while, \n";
+											cout<<"excepto \n";
+											cout<<"que la condición se evalúa después de la ejecución de la declaración en vez de antes, lo que garantiza al menos una ejecución\n";
+											cout<<"de declaración , incluso si la condición no se cumple. Por ejemplo, el siguiente programa de ejemplo se hace eco de \n";
+											cout<<"cualquier texto que el usuario introduce hasta que el usuario introduce adiós:\n";
+											cout<<"\n";
+											cout<<"El do-while es preferido sobre un bucle mientras que cuando la declaración debe ser ejecutado al menos una vez, por \n";
+											cout<<"ejemplo, cuando la condición que se comprueba al final del bucle se determina dentro de la sentencia de bucle en sí. \n";
+											cout<<"En el ejemplo anterior, la entrada del usuario dentro del bloque es lo que determinará si el bucle termina. Y así, incluso \n";
+											cout<<"si el usuario quiere terminar el bucle tan pronto como sea posible mediante la introducción deadiós, El bloque en el bucle \n";
+											cout<<"debe ser ejecutado al menos una vez para que solicite la entrada, y la condición puede, de hecho, sólo se determina después\n";
+											cout<<"de que se ejecuta.\n";
+											cout<<"El bucle for\n";
+											cout<<"El de bucle está diseñado para repetir un número de veces. Su sintaxis es: for (inicialización; condición; incremento) \n";
+											cout<<"Declaración; igual que el bucle while, este bucle se repite declaración mientras la condición es verdadera.\n";
+											cout<<"La sentencia break\n";
+											cout<<"Ruptura deja un bucle, incluso si la condición para su fin no se cumple. Puede ser utilizado para terminar un bucle infinito, \n";
+											cout<<"o para forzarlo a terminar antes de su fin natural. Por ejemplo, vamos a parar la cuenta atrás antes de su fin natural:\n";
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 8:
+											cout<<"8.Funciones\n";
+											cout<<"Subprogramas\n";
+											cout<<"Los subprogramas se implementan en  respuesta al  diseño modular. Su principal objetivo consiste en facilitar la depuración\n";
+											cout<<"de errores en el software y en facilitar la reutilización de componentes de software para lograr mayor productividad. Todos\n";
+											cout<<"los lenguajes de programación admiten  subprogramas. Se los denomina funciones, procedimientos, subrutinas.  C++ emplea el\n";
+											cout<<"subprograma función. \n";
+											cout<<"\n";
+											cout<<"•	Reducir la complejidad del programa y lograr mayor modularidad.\n";
+											cout<<"•	   Permitir y facilitar el trabajo en equipo. Cada diseñador puede atacar diferentes módulos o subprogramas.\n";
+											cout<<"•	   Facilitar la prueba de un programa, ya que cada subprograma puede ser probado previamente y en forma independiente.\n";
+											cout<<"•	   Optimizar el uso y administración de memoria.\n";
+											cout<<"•	   Crear librerías de subprogramas para su posterior reutilización en otros programas.\n";
+											cout<<"\n";
+											cout<<"•	Parametros Formales\n";
+											cout<<"Los parámetros indican los tipos de datos que se introducen a la función para que realice una la acción requerida. Una \n";
+											cout<<"Funcion puede poseer parámetros de todo tipo como también no poseer ninguno de ellos.\n";
+											cout<<"•	Declaracion de Prototipos y función(Diferencias)\n";
+											cout<<"float vol_cilindro(float r, float a);\n";
+											cout<<"float promedio3(int,int,int);\n";
+											cout<<"void intercambio(int &a, int &b);\n";
+											cout<<"void resolvente(int a,int b,int c,float &x1,float &x2);\n";
+											cout<<"char *strcat(char *c1, const char *c2);\n";
+											cout<<"\n";
+											cout<<"•	Llamada entre funciones\n";
+											cout<<"•	Ambito global y local\n";
+											cout<<"•	Llamada por valor y referencia\n";
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 9:
+											cout<<"9.Vectores\n";
+											cout<<"Declarar \n";
+											cout<<"Una vector es una serie de elementos del mismo tipo colocado en posiciones de memoria contiguas que se puede hacer referencia\n";
+											cout<<" de forma individual mediante la adición de un índice a un identificador único. Eso significa que, por ejemplo, cinco valores\n";
+											cout<<"de tipo int se pueden declarar como una matriz sin tener declarar 5 variables diferentes (cada uno con su propio identificador).\n";
+											cout<<"En cambio, el uso de una matriz, los cinco int valores se almacenan en posiciones de memoria contiguas, y los cinco se puede \n";
+											cout<<"acceder mediante el mismo identificador, con el índice adecuado. Por ejemplo, una matriz que contiene 5 valores enteros de tipo \n";
+											cout<<"int llamada foo podría representarse como: donde cada panel en blanco representa un elemento de la matriz. En este caso, se \n";
+											cout<<"trata de valores de tipo int . \n";
+											cout<<"\n";
+											cout<<"	Utilizar\n";
+											cout<<"Los valores de cualquiera de los elementos de una matriz se puede acceder al igual que el valor de una variable regular del \n";
+											cout<<"mismo tipo. La sintaxis es: nombre [índice] Siguiendo los ejemplos anteriores en los que foo tenía 5 elementos y cada uno de \n";
+											cout<<"esos elementos fue de tipo int , el nombre que se puede utilizar para hacer referencia a cada elemento es el siguiente: Por \n";
+											cout<<"ejemplo, la siguiente sentencia el valor 75 en el tercer elemento de foo :\n";
+											cout<<"\n";
+											cout<<"\n";
+											cout<<"Por lo tanto, la expresión foo [2] es en sí misma una variable de tipo int . Observe que el tercer elemento de foo se especifica \n";
+											cout<<"foo [2] , ya que el primero es foo [0] , el segundo es foo [1] , y Por lo tanto, la tercera es foo [2] . Por esta misma razón, \n";
+											cout<<"su último elemento es foo [4] . Por lo tanto, si escribimos foo [5] , estaríamos accediendo al sexto elemento de foo , y por lo\n";
+											cout<<" tanto en realidad supere el tamaño de la matriz. En C ++, es sintácticamente correcta para superar el rango de validez de los\n";
+											cout<<"índices de una matriz. 	\n";		
+											cout<<"			int Temperatura[24]\n";
+											cout<<"	Manejo de índices\n";
+											cout<<"En C ++, es sintácticamente correcta para superar el rango de validez de los índices de una matriz. Esto puede crear problemas,\n";
+											cout<<" ya que el acceso fuera de rango elementos no causan errores de compilación, pero puede causar errores en tiempo de ejecución\n";
+											cout<<" La razón de esto está permitido será visto en un capítulo posterior cuando se introducen punteros. En este punto, es \n";
+											cout<<"importante ser capaz de distinguir claramente entre los dos usos que corchetes [] se han relacionado con arrays. Llevan a cabo \n";
+											cout<<"dos tareas diferentes: uno es especificar el tamaño de las matrices que hayan sido declarados; y el segundo es especificar \n";
+											cout<<"los índices de elementos de la matriz de hormigón cuando se accede a ellos. No hay que confundir estos dos usos posibles de corchetes [] con matrices.\n";
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 10:
+											cout<<"10.Matrices\n";
+											cout<<"Declarar \n";
+											cout<<"Una matriz es una estructura de datos interna que almacena un conjunto de datos del mismo tipo bajo un nombre de variable común.\n";
+											cout<<" La posición de un elemento dentro de la matriz viene identificada por uno o varios índices, de tal modo que a cada elemento se \n";
+											cout<<"accede mediante el nombre de la matriz y sus índices.\n";
+											cout<<"La dimensión de una matriz es el número de índices necesario para identificar un elemento.\n";
+											cout<<"Una matriz bidimensional es una colección de un número fijo de componentes dispuestos en dos dimensiones, y todos los componentes \n";
+											cout<<"son de la misma sintaxis type. Para declarar una matriz bidimensional es:\n";
+											cout<<"\n";
+											cout<<"DataType nombreArray [intexp1] [intexp2];\n";
+											cout<<"Una matriz bidimensional se puede procesar de tres maneras diferentes.\n";
+											cout<<"1. Proceso de toda la matriz.\n";
+											cout<<"2. Proceso de una fila particular de la matriz, denominada procesamiento fila.\n";
+											cout<<"3. Proceso de una columna en particular de la matriz, llamado procesamiento de columna. \n";
+											cout<<"Al procesar una fila o columna de una matriz bidimensional empleamos algoritmos similares a cuando procesamos órdenes unidimensionales.\n";
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 11:
+											cout<<"11.String y Cadenas\n";
+											cout<<"Funciones\n";
+											cout<<"Tipos fundamentales representan los tipos más básicos manejados por las máquinas en las que el código puede ejecutar.Pero \n";
+											cout<<"una de las principales fortalezas del lenguaje C ++ es su rico conjunto de tipos de compuestos, de los cuales los tipos fundamentales\n";
+											cout<<" son simples bloques de construcción. Un ejemplo del tipo de compuesto es la cadena de clase. Las variables de este tipo son\n";
+											cout<<" capaces de almacenar secuencias de caracteres, tales como palabras o frases. Una característica muy útil! Una primera diferencia \n";
+											cout<<"con los tipos de datos fundamentales es que con el fin de declarar y utilizar objetos (variables) de este tipo, el programa tiene\n";
+											cout<<"que incluir la cabecera donde el tipo se define dentro de la biblioteca estándar (cabecera <string> ). Strings también pueden realizar\n";
+											cout<<"todas las demás operaciones básicas que los tipos de datos fundamentales pueden, como ser declarado sin valor inicial y cambiar\n";
+											cout<<" su valor durante la ejecución\n";
+											cout<<endl <<endl;
+											system("pause");
+											break;
+										case 12:
+											break;//salir temas
+										default:
+											cout<<"\n\n\t\tOpcion No Valida" <<endl;
+											system("pause");
+											break;
+									}
+									system("cls");
+								}while(op_temas!=12);
+							break; //fin opc temas teoricos
+						case 2:
+
+							Reportederendimiento(student);
+							cout<<endl;
+							system("pause");
+							break;//fin opc reporte de rendimiento por estudiante
+						case 3:
+							int opcionexamen;
+						do{
+							cout<<"\t\t EXAMENES" <<endl;
+							cout<<"1.-Tema 1"<<endl;
+							cout<<"2.-Tema 2"<<endl;
+							cout<<"3.-Tema 3"<<endl;
+							cout<<"4.-Tema 4" <<endl;
+							cout<<"5.-Tema 5"<<endl;
+							cout<<"6.-Tema 6"<<endl;
+							cout<<"7.-Tema 7"<<endl;
+							cout<<"8.-Tema 8"<<endl;
+							cout<<"9.-Tema 9"<<endl;
+							cout<<"10.-Tema 10"<<endl;
+							cout<<"11.-Tema 11"<<endl;
+							cout<<"12.-Salir"<<endl;
+							cout<<"opcion ";
+							cin>>opcionexamen;
+							system("cls");
+							switch (opcionexamen)
+							{
+								case 1:
+									dar_examen(student,1);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 2:
+									dar_examen(student,2);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 3:
+									dar_examen(student,3);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 4:
+									dar_examen(student,4);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 5:
+									dar_examen(student,5);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 6:
+									dar_examen(student,6);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 7:
+									dar_examen(student,7);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 8:
+									dar_examen(student,8);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 9:
+									dar_examen(student,9);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 10:
+									dar_examen(student,10);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;
+								case 11:
+									dar_examen(student,11);
+									cout<<endl <<"\t\t\EXAMEN FINALIZADO"<<endl;
+									system("pause");
+									break;								
+								case 12:
+									break; //salir de menu examen
+								default:
+									cout<<endl<<"SELECCIONE UN TEMA CORRECTO "<<endl;
+									system("pause");
+									break;
+							}
+							system("cls");
+
+							
+							
+						}while(opcionexamen!=12);
+							break; //fin opc examen
+						case 4:
+							break; //SALIR
+						default:
+							cout<<"\t\tOpcion No Valida"<<endl;
+							system("pause");
+							break;
+						
+
+
+						
+					}
+					system("cls");
+				}while(ope!=4);
+				}
+				break; //fin Menu Estudiante
+			case 2:
+				ciclo2=true;
+			do{
+				cout<<endl<<"INGRESAR PIN DE DOCENTE: ";
+				cin>>pindoc;
+				docente=Verificar_Pin_Docente(pindoc); //en Docente.h
+				if(docente.pindocente==-1)
+				{
+					cout<<"Pin No Registrado"<<endl;
+					ciclo2=false;
+					system("pause");
+					system("cls");
+				}
+			}while((docente.pindocente==-1)&&(ciclo2==true));
+		 
+			if(ciclo2==true)
+			{
+				do{
+					system("cls");
+					cout<<"NOMBRE: "<<docente.nombredocente <<" "<<docente.apellidodocente <<endl <<"CODIGO: "<<docente.iddocente <<endl<<endl; 	
+					cout<<"\t MENU DOCENTE" <<endl;
+					cout<<"1.-Reporte de Promedio De Notas" <<endl;
+					cout<<"2.-Reporte General De Temas Vistos Por Estudiante" <<endl;
+					cout<<"3.-Salir" <<endl;
+					cout<<"Opcion: ";
+					cin>>opd;
+					switch (opd)
+					{
+						case 1:		
+							break;
+						case 2:
+							reporte_Notas_De_Temas_Por_Nombre_Estudiante();
+							cout<<endl;
+							system("pause");
+							break;
+						case 3:
+							break; //SALIR
+						default:
+							cout<<"Opcion No Valida" <<endl;
+							system("pause");
+							break;
+					}
+					system("cls");
+			}while(opd!=4);
+			}
+				break;
+			case 3:
+				cout<<"\t\t\t MENU JEFE" <<endl;
+				cout<<"1.-Registros de Alumnos" <<endl;
+				cout<<"2.-Registros de Docentes"<<endl;
+				cout<<"3.-Banco de Preguntas "<<endl;
+				cout<<"4.-Registros de Notas "<<endl;
+				cout<<"Opcion: ";
+				cin>>op_admin;
+				system("cls");
+				switch (op_admin)
+				{	
+					case 1:
+						int a;
+						do
+						{
+							cout<<"\t\t\t Registro de Alumnos"<<endl;
+							cout<<"1.-Crear/Reiniciar Registros de Alumnos" <<endl;
+							cout<<"2.-Agregar Alumno" <<endl;
+							cout<<"3.-Listar Registros"<<endl;
+							cout<<"4.-Salir"<<endl;
+							cout<<"Opcion: ";
+							cin>>a;
+							switch (a)
+							{
+					
+								case 1:
+									creararchivoAlumno();
+									cout<<"Registros de Alumnos Creados/Reiniciados "<<endl;
+									system("pause");
+									break;
+								case 2:
+									adicionar_registroalumno();
+									break;
+								case 3:
+									reporte_alumno();
+									cout<<endl;
+									system("pause");
+									break;	
+								case 4:
+									break;
+								default:
+									cout<<"\t\tOpcion Incorrecta"<<endl;
+									system("pause");
+									break;
+							}
+							system("cls");
+						}while(a!=4);
+						break;
+					case 2:
+						int b;
+						do
+						{
+							cout<<"\t\t\t Registro de Docentes"<<endl;
+							cout<<"1.-Crear/Reiniciar Registros de Docentes" <<endl;
+							cout<<"2.-Agregar Docente" <<endl;
+							cout<<"3.-Listar Registros"<<endl;
+							cout<<"4.-Salir"<<endl;
+							cout<<"Opcion: ";
+							cin>>b;
+							switch (b)
+							{
+								case 1:
+									creararchivoDocente();
+									cout<<"Registros de Docentes Creados/Reiniciados"<<endl;
+									system("pause");
+									break;
+								case 2:
+									adicionar_registroDocente();
+									break;
+								case 3:
+									reporte_docente();
+									cout<<endl;
+									system("pause");
+									break;	
+								case 4:
+									break;
+								default:
+									cout<<"\t\tOpcion Incorrecta"<<endl;
+									system("pause");
+									break;
+							}
+							system("cls");
+						}while(b!=4);
+						break;
+					case 3:
+						int c;
+						do
+						{
+							cout<<"\t\t\t Banco de Preguntas"<<endl;
+							cout<<"1.-Crear/Reiniciar Banco de Preguntas" <<endl;
+							cout<<"2.-Agregar Pregunta" <<endl;
+							cout<<"3.-Listar Preguntas"<<endl;
+							cout<<"4.-Salir"<<endl;
+							cout<<"Opcion: ";
+							cin>>c;
+							switch (c)
+							{
+								case 1:
+									creararchivoPreguntas();
+									cout<<"Banco de Preguntas Creado/Reiniciado"<<endl;
+									system("pause");
+									break;
+								case 2:
+									adicionar_registroPregunta();
+									break;
+								case 3:
+									reporte_preguntas();
+									cout<<endl;
+									system("pause");
+									break;	
+								case 4:
+									break;
+								default:
+									cout<<"\t\tOpcion Incorrecta"<<endl;
+									system("pause");
+									break;
+							}
+							system("cls");
+						}while(c!=4);
+					case 4:
+						int d;
+						do
+						{
+							cout<<"\t\t\t Registro de Notas"<<endl;
+							cout<<"1.-Registro de Notas Creados/Reiniciados" <<endl;
+							cout<<"2.-Listar Registros"<<endl;
+							cout<<"3.-Salir"<<endl;
+							cout<<"Opcion: ";
+							cin>>d;
+							switch (d)
+							{
+								case 1:
+									creararchivoNotas();
+									cout<<"Registro de Notas Creado/Reiniciado"<<endl;
+									system("pause");
+									break;
+								case 2:
+									reporte_Notas();
+									system("pause");
+									break;
+								case 3:
+									break;
+								default:
+									cout<<"\t\tOpcion Incorrecta"<<endl;
+									system("pause");
+									break;
+							}
+							system("cls");
+						}while(d!=3);
+						break;
+
+						break;
+					default:
+						break;
+				}
+				break;
+
+			case 4: 
+				break;
+			default:
+				cout<<"\t OPCION NO VALIDA" <<endl;
+				system("pause");
+				break;
+		}
+		system("cls");
+		
+	}while(opp!=4);
+}
