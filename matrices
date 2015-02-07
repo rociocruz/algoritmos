@@ -1,0 +1,64 @@
+#include <iostream>
+#include <conio.h>
+#include <string.h>
+using namespace std;
+
+#define F 20
+#define C 20
+
+void sumaMatriz(int mat1[F][C],int n,int m,int mat2[F][C],mat3[F][C])
+{int i,j;
+for(i=0;i<n;i++){
+	for(j=0;j<m;j++){
+		mat3[i][j]=mat1[i][j]+mat2[i][j];
+	}
+}
+}
+
+void multMat (int mat1[F][C],int n,int m,int o,int mat2[F][C],mat3[F][C]){
+	int i,j,k;
+	for(int i=0; i<n; i++)
+        for(int j=0; j<m; j++)
+            for(int k=0; k<o; k++)
+                mat3[i][j] = mat3[i][j]+mat1[i][k] * mat2[k][j];
+}
+
+void matTrans (int mat1 [F][C],int mat2[C][F]int n, int m){
+	int i,j;
+	for(int i=0; i<n; i++){
+        for( j=0; j<m; j++){
+			mat2[j][i]=mat1[i][j];}
+	}
+}
+#include <iostream>
+#include <conio.h>
+#include <string.h>
+using namespace std;
+
+#define F 20
+#define C 20
+
+void sumaMatriz(int mat1[F][C],int n,int m,int mat2[F][C],mat3[F][C])
+{int i,j;
+for(i=0;i<n;i++){
+	for(j=0;j<m;j++){
+		mat3[i][j]=mat1[i][j]+mat2[i][j];
+	}
+}
+}
+
+void multMat (int mat1[F][C],int n,int m,int o,int mat2[F][C],mat3[F][C]){
+	int i,j,k;
+	for(int i=0; i<n; i++)
+        for(int j=0; j<m; j++)
+            for(int k=0; k<o; k++)
+                mat3[i][j] = mat3[i][j]+mat1[i][k] * mat2[k][j];
+}
+
+void matTrans (int mat1 [F][C],int mat2[C][F]int n, int m){
+	int i,j;
+	for(int i=0; i<n; i++){
+        for( j=0; j<m; j++){
+			mat2[j][i]=mat1[i][j];}
+	}
+}
