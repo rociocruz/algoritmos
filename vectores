@@ -1,0 +1,266 @@
+#include <iostream>
+#include <conio.h>
+#include <math.h>
+#include <time.h>
+using namespace std;
+
+int contarDigitos(int a){
+	int R, c=0;
+	while(a > 0){
+		R = a % 10;
+		c++;
+		a = a / 10;
+	}
+	return(c);
+}
+void concatenarNumeros(int a, int b){
+	int R,c=0,newNum,Fc,auxa=a,auxb=b;
+	if (a < b){
+			c = contarDigitos(b);
+	}else{
+		if(b < a){
+			c = contarDigitos(a);
+		}else{
+			c = contarDigitos(b);
+		}
+	}
+if(auxa < auxb){
+	Fc = powf(10,c);
+	newNum = (auxa*Fc)+auxb;
+	cout << endl << "El numero es : "<<newNum;
+}else{
+	if(auxb < auxa){
+		Fc = powf(10,c);
+		newNum = (auxb*Fc)+auxa;
+		cout << endl << "El numero es : "<<newNum;
+	}else{
+		Fc = powf(10,c);
+		newNum = (auxa*Fc)+auxb;
+		cout << endl << "El numero es : "<<newNum;
+	}
+}
+}
+int digRep(int n){
+	int d1,d2,aux,aux2,cont;
+	aux = n;
+	while(aux > 0){
+		cont = 0;
+		d1 = aux %  10;
+		aux2 = n;
+		while(aux2 > 0){
+			d2 = aux2 % 10;
+			if(d1 == d2){
+				cont++;
+			}
+			aux2 = aux2 / 10;
+		}
+		if(cont > 1){
+			return (d1);
+		}
+		aux = aux % 10;
+	}
+	return(-1);
+}
+int elimNum(int n, int dig){
+	int nnum = 0, cont = 0, d;
+	while(n > 0){
+		d = n % 10;
+		if(d != dig){
+			nnum = nnum + d*powf(10,cont);
+			cont++;
+		}
+		n = n / 10;
+	}
+	return(nnum);
+}
+void eliminarRep(int n){
+	int dig;
+	dig = digRep(n);
+	while(dig != (-1)){
+		n = elimNum(n,dig);
+		dig = digRep(n);
+	}
+cout << "el nuevo numero es --> "<<n<<"",n;
+}
+int invertirNum(int n){
+	int i=0, R, nnum;
+	while(n>0){
+		R = n % 10;
+		nnum = (nnum*10) + R;
+		i++;
+		n = n / 10;
+	}
+	return (nnum);
+}
+int elimDigitoMayor(int n){
+	int pos, nnum, c=0, d, May, e=0,aux, R;
+	aux = n;
+	May = n % 10;
+	while(n > 0){
+		R = n % 10;
+		c++;
+		if( R > May){
+			May = R;
+			d = c;
+		}
+		n = n / 10;
+	}
+	while(aux > 0){
+		R = aux % 10;
+		if( R == May){
+			e = e - 1;
+		}else{
+			nnum = nnum + powf(10,e)*R;
+		}
+		e++;
+		aux = aux / 10;
+	}
+	return(nnum);
+}
+int introDig(int n, int dig){
+	int nnum=0, cont=0,d;
+	d = n % 10;
+	while(d > dig){
+		nnum = nnum + d*powf(10,cont);
+		cont++;
+		n = n / 10;
+		d = n % 10;
+	}
+	nnum = nnum + dig*powf(10,cont);
+	cont++;
+	while(n >0){
+		nnum = nnum + d*powf(10,cont);
+		cont++;
+		n = n / 10;
+		d = n % 10;
+	}
+	return(nnum);
+}
+void verifEsCapicua(int n){
+	int nRev;
+	nRev = invertirNum(n);
+	if( n == nRev){
+		cout<< " El numero es Capicua!! ";
+	}else{
+		cout<< " Lo siento el Numero no es Capicua :( ";
+	}
+}
+void juegoPensar(){
+	int n,x,c=0;
+	srand(time(NULL));
+	x = rand () % 100;
+	cout<< " *** JUEGO DE ADIVINANZA *** ";
+	cout<<endl<<" Introduzca un numero, a ver si tiene Suerte: ";
+	cin>>n;
+	while(n != x){
+		if(n>x){
+			cout<<endl<< "El Numero que Introdujo es Grande, respecto al del Juego ";
+			c++;
+		}else{
+			cout<<endl<< "El Numero que Introdujo es Pequenho, respecto al del Juego ";
+			c++;
+		}
+		cout<<endl<< "Introduzca otro numero, capaz esta vez si le achunte: ";
+		cin>>n;
+	}
+	cout<<endl<< "Es Correcto, FELICIDADES GANO :)";
+	cout<<endl<< "Solo fallo "<<c<<" veces ",c;
+}
+int crapuloDeNum(int n){
+	int R,aux1,S=0,aux2,Crap=0;
+	aux1 = n;
+	while(aux1 > 0){
+		R = aux1 % 10;
+		S = S + R;
+		aux1 = aux1 / 10;
+	}
+	if(S>9){
+		aux2 = S;
+		while(aux2>0){
+			R = aux2 % 10;
+			Crap = Crap + R;
+			aux2 = aux2 / 10;
+		}
+		return(Crap);
+	}else{
+		return(S);
+	}
+}
+void verifEsAutomorfico(int n){
+	int R1,R2,num,cuadrado;
+	num = n;
+	cuadrado = n * n;
+	R1 = n % 10;
+	R2 = cuadrado % 10;
+	if(R1 == R2){
+		cout<< " El Numero es Automorfico";
+	}else{
+		cout<< " El Numero NO es Automorfico";
+	}
+}
+int main (){
+	int a, b, opcion, newNum, n, d;
+	do{
+		cout << endl << endl << "**** MENU PRACTICO #1 ****";
+		cout << endl << " 1.- Concatenar 2 Numeros ";
+		cout << endl << " 2.- Eliminar Duplicados ";
+		cout << endl << " 3.- Voltear Numero ";
+		cout << endl << " 4.- Eliminar Digito Mayor ";
+		cout << endl << " 5.- Introducir Digito en Numero ordenado";
+		cout << endl << " 6.- Comprobar si Es Capicua";
+		cout << endl << " 7.- JUEGO ADIVINA EL NUMERO";
+		cout << endl << " 8.- Encontrar el capulo de un numero";
+		cout << endl << " 9.- Verificar es automorfico";
+		cout << endl << " 10.- Salir ";
+		cout << endl << endl << " Seleccione una opcion ";
+		cin >> opcion;
+		switch (opcion){
+			case 1 : cout << " Introduzca un Numero Natural: ";
+					 cin >>a;
+					 cout << " Introduzca un Numero Natural: ";
+					 cin >>b;
+					 concatenarNumeros(a,b);
+				   	 break;
+			case 2 : cout << " Introduzca un Numero Natural: ";
+					 cin >>a;
+					 eliminarRep(a);
+					 break;
+			case 3 : cout << " Introduzca un Numero Natural: ";
+					 cin >>a;
+					 n = invertirNum(a);
+					 cout << endl << "El numero es : "<<n;
+					 break;
+			case 4 : cout << " Introduzca un Numero Natural: ";
+					 cin >>a;
+					 n = elimDigitoMayor(a);
+					 cout << endl << "El numero es : "<<n;
+					 break;
+			case 5 : cout << " Introduzca un Numero Natural Ordenado: ";
+					 cin >>a;
+					 cout << " Introduzca un Numero Natural: ";
+					 cin >>d;
+					 n = introDig(a,d);
+					 cout << endl << "El numero es : "<<n;
+					 break;
+			case 6 : cout << "Ingrese el Numero a Analizar ";
+					 cin>>a;
+					 verifEsCapicua(a);
+					 break;
+			case 7 : juegoPensar();
+					 break;
+			case 8 : cout << " Introduzca un Numero Natural: ";
+					 cin >>d;
+					 a = crapuloDeNum(d);
+					 cout << " El Crapulo de " <<d<< " es " <<a<< " ",d,a;
+					 break;
+			case 9 : cout << " Introduzca un Numero a saber si es Crapulo: ";
+					 cin >>d;
+					 verifEsAutomorfico(d);
+					 break;
+		}
+	}while(opcion != 0);
+	return (1);
+}
+
+
+
